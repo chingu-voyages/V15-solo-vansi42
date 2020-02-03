@@ -1,0 +1,11 @@
+* {
+}
+body {
+  text-align: center;
+}
+
+.App {
+  text-align: center;
+  /*left: 50%;
+  transform: translateX(-50%);*/
+}

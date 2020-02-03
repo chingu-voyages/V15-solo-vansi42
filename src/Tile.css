@@ -1,0 +1,33 @@
+.tile {
+  width: 7%;
+  height: 75px;
+  /*border: 1px solid black;
+  border-radius: 8px;
+  background-image: url("/assets/tiles.jpg");
+  background-size: 1016px;*/
+  /*padding: 10px;*/
+  /*margin: 10px 5px 20px;*/
+  background-color: beige;
+  border-top: 1px solid #f4f4f2;
+
+  -ms-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  -moz-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  -o-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  -webkit-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+
+  -ms-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -o-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  position: absolute;
+}
+
+.tile.selected {
+  border: 1px solid gold;
+}
+
+.tile.found {
+  visibility: hidden;
+}
