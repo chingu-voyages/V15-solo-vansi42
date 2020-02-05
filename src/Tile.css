@@ -1,6 +1,6 @@
 .tile {
   width: 7%;
-  height: 75px;
+  height: 10%;
   /*border: 1px solid black;
   border-radius: 8px;
   background-image: url("/assets/tiles.jpg");
@@ -25,7 +25,8 @@
 }
 
 .tile.selected {
-  border: 1px solid gold;
+  border: 6px solid gold;
+  box-sizing: border-box;
 }
 
 .tile.found {

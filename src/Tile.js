@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./Tile.css";
 
 class Tile extends Component {
-  static defaultProps = { width: 7, height: 75 };
+  static defaultProps = { width: 7, height: 10 };
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
@@ -20,7 +20,8 @@ class Tile extends Component {
     const width = this.props.width,
       height = this.props.height;
     const classes =
-      "tile" +
+      "tile " +
+      this.props.face +
       (this.props.isSelected ? " selected" : "") +
       (this.props.isFound ? " found" : "");
     let top = height * this.props.row + height * this.props.layer;
@@ -33,7 +34,7 @@ class Tile extends Component {
       top = (height * 8) / 2 - height / 2;
     }
     if (this.props.layer === "left") {
-      left = 0 ;
+      left = 0;
     } else if (this.props.layer === "right") {
       left += 13 * width;
     } else {
@@ -44,8 +45,8 @@ class Tile extends Component {
       <div
         className={classes}
         style={{
-          left: left+'%',
-          top: top,
+          left: left + "%",
+          top: top + "%",
           zIndex: this.props.layer
         }}
         face={this.props.face}

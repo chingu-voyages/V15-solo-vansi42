@@ -40,14 +40,13 @@ class Board extends Component {
     };
     this.checkIfPair = this.checkIfPair.bind(this);
     this.restart = this.restart.bind(this);
-    this.getTilesList = this.getTilesList.bind(this);
   }
 
   getTilesList() {
     let tilesList = [];
     // Numbers
     for (let i = 1; i <= 9; i++) {
-      for (let i = 1; i <= 4; i++) {
+      for (let j = 1; j <= 4; j++) {
         tilesList.push("Dots-" + i, "Bamboo-" + i, "Character-" + i);
       }
     }
@@ -63,17 +62,7 @@ class Board extends Component {
     tilesList.push("PLUM", "ORCHID", "MUM", "BAMBOO");
     // Seasons
     tilesList.push("SPRING", "WINTER", "SUMMER", "AUTUMN");
-
     return tilesList;
-  }
-
-  restart() {
-    let newBoard = this.createBoard();
-    this.setState({
-      board: newBoard,
-      pairsLeft: newBoard.length / 2,
-      selected: null
-    });
   }
 
   createBoard() {
@@ -119,14 +108,32 @@ class Board extends Component {
     return newBoard;
   }
 
+  restart() {
+    let newBoard = this.createBoard();
+    this.setState({
+      board: newBoard,
+      pairsLeft: newBoard.length / 2,
+      selected: null
+    });
+  }
+
+  isFlower(t) {
+    return ["MUM", "BAMBOO", "ORCHID", "PLUM"].includes(t);
+  }
+  isSeason(t) {
+    return ["AUTUMN", "WINTER", "SPRING", "SUMMER"].includes(t);
+  }
+
   checkIfPair(t) {
     const selectedID = this.state.selected;
     let isPair = false;
     if (
       selectedID !== null &&
       (this.state.board[selectedID].face === this.state.board[t].face ||
-        (["SUMMER", "SPRING", "AUTUMN", "WINTER"].includes(this.state.board[selectedID].face) &&
-          ["SUMMER", "SPRING", "AUTUMN", "WINTER"].includes(this.state.board[t].face)))
+        (this.isFlower(this.state.board[selectedID].face) &&
+          this.isFlower(this.state.board[t].face)) ||
+        (this.isSeason(this.state.board[selectedID].face) &&
+          this.isSeason(this.state.board[t].face)))
     ) {
       isPair = true;
     }
@@ -169,7 +176,12 @@ class Board extends Component {
           key={i}
         />
       ));
-      return <div className="board">{tiles} </div>;
+      return (
+        <div>
+          <button onClick={this.restart}>Restart</button>
+          <div className="board"> {tiles} </div>
+        </div>
+      );
     }
   }
 }
