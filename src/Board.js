@@ -142,6 +142,7 @@ class Board extends Component {
         [layer, row, 1 + parseInt(position, 10)].join(",")
       ].isAvailable = true;
     }
+    // Edge cases
     // top tile frees four under it
     if (layer === "4") {
       newBoard[[3, 0, 0]].isAvailable = true;
@@ -149,6 +150,17 @@ class Board extends Component {
       newBoard[[3, 1, 0]].isAvailable = true;
       newBoard[[3, 1, 1]].isAvailable = true;
     }
+    // rightmost tiles
+    if (position === "0" && layer === "right") {
+      newBoard[[0, 3, 11]].isAvailable = true;
+      newBoard[[0, 4, 11]].isAvailable = true;
+    }
+    // leftmost tile
+    if (layer === "left") {
+      newBoard[[0, 3, 0]].isAvailable = true;
+      newBoard[[0, 4, 0]].isAvailable = true;
+    }
+
     return newBoard;
   }
 
