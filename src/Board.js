@@ -1,16 +1,9 @@
 import React, { Component } from "react";
 import "./Board.css";
 import Tile from "./Tile";
-import { scrambleArray } from "./helpers";
+import { scrambleArray, isFlower, isSeason, compArray } from "./helpers";
 
 class Board extends Component {
-  // 1-9 (Dots, Bamboo, Characters), each of these has 4 copies: 108 total
-  // 4 winds, each has 4 copies: 16 total
-  // 3 dragons (red, green, white), each has 4 copies: 12
-  // 4 flowers (plum blossom, orchid, chrysantemum, bamboo)
-  // 4 seasons
-  // Total: 144
-
   // Layout:
   // Layer 0: 12-8-10-12-12-10-8-12
   // Layer 1: 6 X 6
@@ -30,18 +23,27 @@ class Board extends Component {
       right: [2]
     }
   };
+
   constructor(props) {
     super(props);
     let newBoard = this.createBoard();
     this.state = {
       board: newBoard,
-      pairsLeft: newBoard.length / 2,
+      pairsLeft: Object.keys(newBoard).length / 2,
       selected: null
     };
     this.checkIfPair = this.checkIfPair.bind(this);
     this.restart = this.restart.bind(this);
   }
 
+  // getTilesList()
+  // Builds an array of the classic tiles set:
+  // 1-9 (Dots, Bamboo, Characters), each of these has 4 copies: 108 total
+  // 4 winds, each has 4 copies: 16 total
+  // 3 dragons (red, green, white), each has 4 copies: 12
+  // 4 flowers (plum blossom, orchid, chrysantemum, bamboo)
+  // 4 seasons
+  // Total: 144
   getTilesList() {
     let tilesList = [];
     // Numbers
@@ -66,27 +68,20 @@ class Board extends Component {
   }
 
   createBoard() {
-    let newBoard = [];
+    let newBoard = {};
     let tiles = scrambleArray(this.getTilesList());
     // each tile has coords: layer, row, position
     let layer = 0,
       row = 0,
       position = 0,
-      padding = 0,
       isAvailable = "";
     for (let i = 0; i < tiles.length; i++) {
-      padding = (14 - this.props.settings[layer][row]) / 2;
-      //isAvailable = (position === 0 || position === this.props.settings[layer][row] - 1);
-      isAvailable = true;
-      newBoard.push({
+      isAvailable = this.isAvailable({ layer, row, position });
+      newBoard[[layer, row, position]] = {
         face: tiles[i],
         isFound: false,
-        layer: layer,
-        row: row,
-        position: position,
-        padding: padding,
         isAvailable: isAvailable
-      });
+      };
 
       position++;
       if (position === this.props.settings[layer][row]) {
@@ -104,7 +99,56 @@ class Board extends Component {
         }
       }
     }
-    // Mix it all up
+    return newBoard;
+  }
+
+  // Check if tile is available
+  // e.i. at least one of its sides is empty and there are no tiles covering it.
+  // Param: t
+  // On the first time this runs, the board isn't initialized yet. then t is an object {layer, row, position}.
+  // If the board is initialized, then t stands for the tile's index.
+  isAvailable(t) {
+    // Initializing
+    let { layer, row, position } = t;
+    return (
+      // First tile in row
+      (position === 0 &&
+        !(row === 3 && layer === 0) &&
+        !(row === 4 && layer === 0) &&
+        layer !== "right" &&
+        layer !== 3) ||
+      // Last tile in row
+      (position === this.props.settings[layer][row] - 1 &&
+        !(row === 3 && layer === 0) &&
+        !(row === 4 && layer === 0) &&
+        layer !== 3)
+    );
+  }
+
+  updateAvailability(t) {
+    let [layer, row, position] = t;
+    let newBoard = this.state.board;
+    newBoard[t].isAvailable = false;
+    // update tile to the left
+    if (
+      position > 0 &&
+      !newBoard[[layer, row, position - 1].join(",")].isFound
+    ) {
+      newBoard[[layer, row, position - 1].join(",")].isAvailable = true;
+    }
+    // update tile to the right
+    if (position < this.props.settings[layer][row] - 1) {
+      newBoard[
+        [layer, row, 1 + parseInt(position, 10)].join(",")
+      ].isAvailable = true;
+    }
+    // top tile frees four under it
+    if (layer === "4") {
+      newBoard[[3, 0, 0]].isAvailable = true;
+      newBoard[[3, 0, 1]].isAvailable = true;
+      newBoard[[3, 1, 0]].isAvailable = true;
+      newBoard[[3, 1, 1]].isAvailable = true;
+    }
     return newBoard;
   }
 
@@ -117,33 +161,30 @@ class Board extends Component {
     });
   }
 
-  isFlower(t) {
-    return ["MUM", "BAMBOO", "ORCHID", "PLUM"].includes(t);
-  }
-  isSeason(t) {
-    return ["AUTUMN", "WINTER", "SPRING", "SUMMER"].includes(t);
-  }
-
   checkIfPair(t) {
     const selectedID = this.state.selected;
     let isPair = false;
     if (
       selectedID !== null &&
+      !compArray(t, selectedID) &&
       (this.state.board[selectedID].face === this.state.board[t].face ||
-        (this.isFlower(this.state.board[selectedID].face) &&
-          this.isFlower(this.state.board[t].face)) ||
-        (this.isSeason(this.state.board[selectedID].face) &&
-          this.isSeason(this.state.board[t].face)))
+        (isFlower(this.state.board[selectedID].face) &&
+          isFlower(this.state.board[t].face)) ||
+        (isSeason(this.state.board[selectedID].face) &&
+          isSeason(this.state.board[t].face)))
     ) {
       isPair = true;
     }
     if (!isPair) {
       this.setState({ selected: t });
-    } else if (selectedID !== t) {
+    } else {
       let newBoard = this.state.board;
       newBoard[t].isFound = true;
       newBoard[this.state.selected].isFound = true;
       let pairsLeft = this.state.pairsLeft - 1;
+
+      newBoard = this.updateAvailability(t);
+      newBoard = this.updateAvailability(this.state.selected);
       this.setState({
         selected: null,
         board: newBoard,
@@ -161,19 +202,23 @@ class Board extends Component {
         </div>
       );
     } else {
-      const tiles = this.state.board.map((t, i) => (
+      const board = this.state.board;
+      //console.log(board);
+      const tiles = Object.keys(board).map((key, i) => (
         <Tile
-          tileID={i}
-          face={t.face}
-          isAvailable={t.isAvailable}
+          face={board[key].face}
+          isAvailable={board[key].isAvailable}
           checkIfPair={this.checkIfPair}
-          isSelected={this.state.selected === i}
-          isFound={t.isFound}
-          layer={t.layer}
-          row={t.row}
-          position={t.position}
-          padding={t.padding}
-          key={i}
+          curr={this.state.selected}
+          isSelected={compArray(this.state.selected, key.split(","))}
+          isFound={board[key].isFound}
+          layer={key.split(",")[0]}
+          row={key.split(",")[1]}
+          position={key.split(",")[2]}
+          padding={
+            (14 - this.props.settings[key.split(",")[0]][key.split(",")[1]]) / 2
+          }
+          key={key}
         />
       ));
       return (

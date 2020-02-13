@@ -1,20 +1,20 @@
 .tile {
   width: 7%;
   height: 10%;
-  /*border: 1px solid black;
-  border-radius: 8px;
-  background-image: url("/assets/tiles.jpg");
-  background-size: 1016px;*/
-  /*padding: 10px;*/
-  /*margin: 10px 5px 20px;*/
+
   background-color: beige;
   border-top: 1px solid #f4f4f2;
+  background-size: 100% 100%;
 
-  -ms-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  /*-ms-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
   -moz-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
   -o-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
   -webkit-box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
-  box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;
+  box-shadow: 0 7px 0 #bfbaad, 0 0.5em 0 #a8a38c, 0 12px 12px #a8a38c;*/
+
+  box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 3px rgba(255, 255, 255, 1),
+    inset -2px -2px 3px rgba(115, 115, 40, 0.4);
 
   -ms-border-radius: 8px;
   -moz-border-radius: 8px;
@@ -22,10 +22,11 @@
   -webkit-border-radius: 8px;
   border-radius: 8px;
   position: absolute;
+  cursor: pointer;
 }
 
 .tile.selected {
-  border: 6px solid gold;
+  border: 2px solid aqua;
   box-sizing: border-box;
 }
 

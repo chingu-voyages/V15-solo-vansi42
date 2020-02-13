@@ -10,7 +10,11 @@ class Tile extends Component {
 
   handleClick(e) {
     if (this.props.isAvailable) {
-      this.props.checkIfPair(this.props.tileID);
+      this.props.checkIfPair([
+        this.props.layer,
+        this.props.row,
+        this.props.position
+      ]);
     } else {
       console.log("unavailable");
     }
@@ -29,7 +33,7 @@ class Tile extends Component {
     if (
       this.props.layer === "left" ||
       this.props.layer === "right" ||
-      this.props.layer === 4
+      this.props.layer === "4"
     ) {
       top = (height * 8) / 2 - height / 2;
     }
@@ -48,10 +52,10 @@ class Tile extends Component {
           left: left + "%",
           top: top + "%",
           zIndex: this.props.layer
+          //backgroundImage: "url('/assets/" + this.props.face + ".png')"
         }}
         face={this.props.face}
         onClick={this.handleClick}
-        key={this.props.tileID}
       >
         {this.props.face}
       </div>
