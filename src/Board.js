@@ -27,11 +27,14 @@ class Board extends Component {
     this.state = {
       board: newBoard,
       pairsLeft: Object.keys(newBoard).length / 2,
-      selected: null
+      selected: null,
+      undo: []
     };
     this.handleChoice = this.handleChoice.bind(this);
     this.checkIfPair = this.checkIfPair.bind(this);
     this.restart = this.restart.bind(this);
+    this.undoMove = this.undoMove.bind(this);
+    this.updateAvailability = this.updateAvailability.bind(this);
   }
 
   // getTilesList()
@@ -130,41 +133,65 @@ class Board extends Component {
   }
 
   // updateAvailability(t):
-  // Every time a tile is removed we need to upadte the availability for its neighbors.
+  // Every time a tile is removed or returned we need to update the availability for its neighbors.
   updateAvailability(t) {
     let [layer, row, position] = t;
     let newBoard = this.state.board;
-    newBoard[t].isAvailable = false;
+    //newBoard[t].isAvailable = false;
+    let currTile = newBoard[[layer, row, position].join(",")];
+    let leftTile = newBoard[[layer, row, position - 1].join(",")];
+    let rightTile =
+      newBoard[[layer, row, 1 + parseInt(position, 10)].join(",")];
     // update tile to the left
-    if (
-      position > 0 &&
-      !newBoard[[layer, row, position - 1].join(",")].isRemoved
-    ) {
-      newBoard[[layer, row, position - 1].join(",")].isAvailable = true;
+    if (position > 0 && !leftTile.isRemoved) {
+      if (currTile.isRemoved) {
+        leftTile.isAvailable = true;
+      } else {
+        leftTile.isAvailable = false;
+      }
     }
     // update tile to the right
     if (position < this.props.settings[layer][row] - 1) {
-      newBoard[
-        [layer, row, 1 + parseInt(position, 10)].join(",")
-      ].isAvailable = true;
+      if (currTile.isRemoved) {
+        rightTile.isAvailable = true;
+      } else {
+        rightTile.isAvailable = false;
+      }
     }
     // Edge cases
     // top tile frees four under it
     if (layer === "4") {
-      newBoard[[3, 0, 0]].isAvailable = true;
-      newBoard[[3, 0, 1]].isAvailable = true;
-      newBoard[[3, 1, 0]].isAvailable = true;
-      newBoard[[3, 1, 1]].isAvailable = true;
+      if (currTile.isRemoved) {
+        newBoard[[3, 0, 0]].isAvailable = true;
+        newBoard[[3, 0, 1]].isAvailable = true;
+        newBoard[[3, 1, 0]].isAvailable = true;
+        newBoard[[3, 1, 1]].isAvailable = true;
+      } else {
+        newBoard[[3, 0, 0]].isAvailable = false;
+        newBoard[[3, 0, 1]].isAvailable = false;
+        newBoard[[3, 1, 0]].isAvailable = false;
+        newBoard[[3, 1, 1]].isAvailable = false;
+      }
     }
     // rightmost tiles
     if (position === "0" && layer === "right") {
-      newBoard[[0, 3, 11]].isAvailable = true;
-      newBoard[[0, 4, 11]].isAvailable = true;
+      if (currTile.isRemoved) {
+        newBoard[[0, 3, 11]].isAvailable = true;
+        newBoard[[0, 4, 11]].isAvailable = true;
+      } else {
+        newBoard[[0, 3, 11]].isAvailable = false;
+        newBoard[[0, 4, 11]].isAvailable = false;
+      }
     }
     // leftmost tile
     if (layer === "left") {
-      newBoard[[0, 3, 0]].isAvailable = true;
-      newBoard[[0, 4, 0]].isAvailable = true;
+      if (currTile.isRemoved) {
+        newBoard[[0, 3, 0]].isAvailable = true;
+        newBoard[[0, 4, 0]].isAvailable = true;
+      } else {
+        newBoard[[0, 3, 0]].isAvailable = false;
+        newBoard[[0, 4, 0]].isAvailable = false;
+      }
     }
 
     return newBoard;
@@ -180,6 +207,21 @@ class Board extends Component {
       pairsLeft: newBoard.length / 2,
       selected: null
     });
+  }
+
+  // undoMove():
+  // pops two tiles out of the undo stack and returns them to the board
+  undoMove() {
+    if (this.state.undo.length > 0) {
+      let newUndo = this.state.undo,
+        newBoard = this.state.board;
+      for (let i = 0; i < 2; i++) {
+        let t = newUndo.pop();
+        newBoard[t].isRemoved = false;
+        this.updateAvailability(t);
+      }
+      this.setState({ undo: newUndo, board: newBoard, selected: null });
+    }
   }
 
   // checkIfPair(t):
@@ -213,10 +255,15 @@ class Board extends Component {
       newBoard[this.state.selected].isRemoved = true;
       newBoard = this.updateAvailability(t);
       newBoard = this.updateAvailability(this.state.selected);
+
+      let newUndo = this.state.undo;
+      newUndo.push(t);
+      newUndo.push(this.state.selected);
       this.setState({
         selected: null,
         board: newBoard,
-        pairsLeft: pairsLeft
+        pairsLeft: pairsLeft,
+        undo: newUndo
       });
     }
   }
@@ -252,6 +299,7 @@ class Board extends Component {
       return (
         <div>
           <button onClick={this.restart}>Restart</button>
+          <button onClick={this.undoMove}>Undo</button>
           <div className="board"> {tiles} </div>
         </div>
       );

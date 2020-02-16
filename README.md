@@ -2,6 +2,7 @@
 
 ## What is it about?
 Mahjong is a traditional chinese game combining strategy, patience, spatial cognintion and luck.
+The solitaire Mahjong uses the same tiles, but has totally different rules.
 
 You can read more about it here: https://en.wikipedia.org/wiki/Mahjong_solitaire
 
@@ -31,15 +32,15 @@ Player wins when all of them are removed.
 An object containing all the tiles. 
 
 The keys are the coordinates [Layer, Row, Position]. Other attributes for the tiles are: 
-
 - The picture on the tile (Not yet implemented)
 - Is it available for removal?
 - Is it already removed?
 
+Also the board contains a "stack" which saves all the tiles removed by order. It is used for the "Undo" functionality.
+
 ## Plans for the future
 - Add nice graphics
 - Make it responsive
-- Add an "undo" button (Quite easy, every pair removed is kept in a stack and "pulled" out in case of an undo)
 - Add a "hint" button
 - Add autoplay
 - High scores table
