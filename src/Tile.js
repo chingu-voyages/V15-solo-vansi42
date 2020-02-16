@@ -51,7 +51,7 @@ class Tile extends Component {
         style={{
           left: left + "%",
           top: top + "%",
-          zIndex: this.props.layer
+          zIndex: this.props.layer == "left" ? "-1" : this.props.layer
         }}
         face={this.props.face}
         onClick={this.handleClick}
