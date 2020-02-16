@@ -30,6 +30,6 @@
   box-sizing: border-box;
 }
 
-.tile.found {
+.tile.removed {
   visibility: hidden;
 }

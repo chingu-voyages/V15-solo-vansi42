@@ -10,7 +10,7 @@ class Tile extends Component {
 
   handleClick(e) {
     if (this.props.isAvailable) {
-      this.props.checkIfPair([
+      this.props.handleChoice([
         this.props.layer,
         this.props.row,
         this.props.position
@@ -27,7 +27,7 @@ class Tile extends Component {
       "tile " +
       this.props.face +
       (this.props.isSelected ? " selected" : "") +
-      (this.props.isFound ? " found" : "");
+      (this.props.isRemoved ? " removed" : "");
     let top = height * this.props.row + height * this.props.layer;
     let left = width * this.props.position;
     if (
@@ -52,7 +52,6 @@ class Tile extends Component {
           left: left + "%",
           top: top + "%",
           zIndex: this.props.layer
-          //backgroundImage: "url('/assets/" + this.props.face + ".png')"
         }}
         face={this.props.face}
         onClick={this.handleClick}

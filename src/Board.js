@@ -4,14 +4,11 @@ import Tile from "./Tile";
 import { scrambleArray, isFlower, isSeason, compArray } from "./helpers";
 
 class Board extends Component {
-  // Layout:
-  // Layer 0: 12-8-10-12-12-10-8-12
-  // Layer 1: 6 X 6
-  // Layer 2: 4 X 4
-  // Layer 3: 2 X 2
-  // Layer 4: 1
-  // Left: 1
-  // Right: 2
+  // Layout for classic game.
+  // Layer 0 row 0 has 12 tiles
+  // Layer 0 row 1 has 8 tiles
+  // And so on...
+
   static defaultProps = {
     settings: {
       0: [12, 8, 10, 12, 12, 10, 8, 12],
@@ -32,6 +29,7 @@ class Board extends Component {
       pairsLeft: Object.keys(newBoard).length / 2,
       selected: null
     };
+    this.handleChoice = this.handleChoice.bind(this);
     this.checkIfPair = this.checkIfPair.bind(this);
     this.restart = this.restart.bind(this);
   }
@@ -49,7 +47,7 @@ class Board extends Component {
     // Numbers
     for (let i = 1; i <= 9; i++) {
       for (let j = 1; j <= 4; j++) {
-        tilesList.push("Dots-" + i, "Bamboo-" + i, "Character-" + i);
+        tilesList.push("Dots-" + i, "Bamboo-" + i, "Char-" + i);
       }
     }
     // Winds
@@ -67,22 +65,29 @@ class Board extends Component {
     return tilesList;
   }
 
+  // createBoard()
+  // Returns the main object for the game, initialized for a new game.
+  // The keys are the tiles coordinates (layer, row, position)
+  // Each tile has 3 attributes:
+  // - face: the "picture" on it
+  // - isRemoved: if true, don't display it
+  // - isAvailable: Can it be removed in the current move?
   createBoard() {
     let newBoard = {};
-    let tiles = scrambleArray(this.getTilesList());
-    // each tile has coords: layer, row, position
+    // Shuffle the tiles
+    const tiles = scrambleArray(this.getTilesList());
     let layer = 0,
       row = 0,
       position = 0,
       isAvailable = "";
+
     for (let i = 0; i < tiles.length; i++) {
       isAvailable = this.isAvailable({ layer, row, position });
       newBoard[[layer, row, position]] = {
         face: tiles[i],
-        isFound: false,
+        isRemoved: false,
         isAvailable: isAvailable
       };
-
       position++;
       if (position === this.props.settings[layer][row]) {
         position = 0;
@@ -102,22 +107,21 @@ class Board extends Component {
     return newBoard;
   }
 
-  // Check if tile is available
+  // isAvailable(t):
+  // Check if tile t can be removed.
   // e.i. at least one of its sides is empty and there are no tiles covering it.
-  // Param: t
-  // On the first time this runs, the board isn't initialized yet. then t is an object {layer, row, position}.
-  // If the board is initialized, then t stands for the tile's index.
+  // t contains the tile's coordinates.
+  // This function is used only to initialize the "isAvailable" attribute for each tile.
   isAvailable(t) {
-    // Initializing
     let { layer, row, position } = t;
     return (
-      // First tile in row
+      // First tile in row and edge cases
       (position === 0 &&
         !(row === 3 && layer === 0) &&
         !(row === 4 && layer === 0) &&
         layer !== "right" &&
         layer !== 3) ||
-      // Last tile in row
+      // Last tile in row and edge cases
       (position === this.props.settings[layer][row] - 1 &&
         !(row === 3 && layer === 0) &&
         !(row === 4 && layer === 0) &&
@@ -125,6 +129,8 @@ class Board extends Component {
     );
   }
 
+  // updateAvailability(t):
+  // Every time a tile is removed we need to upadte the availability for its neighbors.
   updateAvailability(t) {
     let [layer, row, position] = t;
     let newBoard = this.state.board;
@@ -132,7 +138,7 @@ class Board extends Component {
     // update tile to the left
     if (
       position > 0 &&
-      !newBoard[[layer, row, position - 1].join(",")].isFound
+      !newBoard[[layer, row, position - 1].join(",")].isRemoved
     ) {
       newBoard[[layer, row, position - 1].join(",")].isAvailable = true;
     }
@@ -164,6 +170,9 @@ class Board extends Component {
     return newBoard;
   }
 
+  // restart():
+  // Starts a new game.
+  // creates a new board (shuffled)
   restart() {
     let newBoard = this.createBoard();
     this.setState({
@@ -173,6 +182,8 @@ class Board extends Component {
     });
   }
 
+  // checkIfPair(t):
+  // returns true if the tile t matches the tile that was previously selected.
   checkIfPair(t) {
     const selectedID = this.state.selected;
     let isPair = false;
@@ -187,14 +198,19 @@ class Board extends Component {
     ) {
       isPair = true;
     }
-    if (!isPair) {
+    return isPair;
+  }
+  // handleChoice(t):
+  // if t matches the previously selected tile - remove them from the board.
+  // else, set t as the new selected tile.
+  handleChoice(t) {
+    if (!this.checkIfPair(t)) {
       this.setState({ selected: t });
     } else {
       let newBoard = this.state.board;
-      newBoard[t].isFound = true;
-      newBoard[this.state.selected].isFound = true;
       let pairsLeft = this.state.pairsLeft - 1;
-
+      newBoard[t].isRemoved = true;
+      newBoard[this.state.selected].isRemoved = true;
       newBoard = this.updateAvailability(t);
       newBoard = this.updateAvailability(this.state.selected);
       this.setState({
@@ -206,6 +222,7 @@ class Board extends Component {
   }
 
   render() {
+    // Game over
     if (this.state.pairsLeft === 0) {
       return (
         <div>
@@ -215,15 +232,14 @@ class Board extends Component {
       );
     } else {
       const board = this.state.board;
-      //console.log(board);
       const tiles = Object.keys(board).map((key, i) => (
         <Tile
           face={board[key].face}
           isAvailable={board[key].isAvailable}
-          checkIfPair={this.checkIfPair}
+          handleChoice={this.handleChoice}
           curr={this.state.selected}
           isSelected={compArray(this.state.selected, key.split(","))}
-          isFound={board[key].isFound}
+          isRemoved={board[key].isRemoved}
           layer={key.split(",")[0]}
           row={key.split(",")[1]}
           position={key.split(",")[2]}

@@ -1,68 +1,39 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# MyJong - Classic Mahjong Solitaire Game
 
-## Available Scripts
+## What is it about?
+Mahjong is a traditional chinese game combining strategy, patience, spatial cognintion and luck.
+You can read more about it here: https://en.wikipedia.org/wiki/Mahjong_solitaire
+And you can play it online here: https://myjong.herokuapp.com/
 
-In the project directory, you can run:
+## Rules of the game
+There are 144 tiles on the board. 
+The types of tiles are:
+- Charachters: 1 to 9. Match is the exact same tile.
+- Dots: 1 to 9. Match is the exact same tile.
+- Bamboo: 1 to 9. Match is the exact same tile.
+- The four seasons. Match can be any two of the seasons.
+- The four flowers (Plum blossom, Orchid, Chrysantemum aka MUM, Bamboo). Match can be any two of the flowers.
+- The three dragons (red, blue, green). Match is the exact same tile.
 
-### `npm start`
+In each turn, player removes a pair of tiles. 
+You can remove a tile only if at least one of its sides is free and there are no tiles covering it.
+Player wins when all of them are removed.
+### Attention: Not all games are winnable!
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Main Structure: The Board
+An object containing all the tiles. 
+The keys are the coordinates [Layer, Row, Position]. Other attributes for the tiles are: 
+- The picture on the tile (Not yet implemented)
+- Is it available for removal?
+- Is it already removed?
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Plans for the future
+- Add nice graphics
+- Make it responsive
+- Add an "undo" button (Quite easy, every pair removed is kept in a stack and "pulled" out in case of an undo)
+- Add a "hint" button
+- Add autoplay
+- High scores table
+- Add a message whenever there are no more moves available
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+# Please feel free to contact me if you have anu question, remarks or a craving for noodles soup! 🍲
