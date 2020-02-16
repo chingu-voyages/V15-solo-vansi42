@@ -17,6 +17,7 @@ The types of tiles are:
 - The four seasons. Match can be any two of the seasons.
 - The four flowers (Plum blossom, Orchid, Chrysantemum aka MUM, Bamboo). Match can be any two of the flowers.
 - The three dragons (red, blue, green). Match is the exact same tile.
+- The four Winds. Match is the exact same tile.
 
 In each turn, player removes a pair of tiles. 
 
@@ -45,4 +46,4 @@ The keys are the coordinates [Layer, Row, Position]. Other attributes for the ti
 - Add a message whenever there are no more moves available
 
 
-Please feel free to contact me if you have any question, remarks or a craving for noodles soup! 🍲
+Please feel free to contact me if you have any questions, remarks or a craving for noodles soup! 🍲
