@@ -204,7 +204,7 @@ class Board extends Component {
     let newBoard = this.createBoard();
     this.setState({
       board: newBoard,
-      pairsLeft: newBoard.length / 2,
+      pairsLeft: Object.keys(newBoard).length / 2,
       selected: null
     });
   }
