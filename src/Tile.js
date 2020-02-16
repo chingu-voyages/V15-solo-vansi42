@@ -27,6 +27,7 @@ class Tile extends Component {
       "tile " +
       this.props.face +
       (this.props.isSelected ? " selected" : "") +
+      (this.props.isAvailable ? " available" : "") +
       (this.props.isRemoved ? " removed" : "");
     let top = height * this.props.row + height * this.props.layer;
     let left = width * this.props.position;

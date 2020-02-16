@@ -22,6 +22,9 @@
   -webkit-border-radius: 8px;
   border-radius: 8px;
   position: absolute;
+}
+
+.tile.available {
   cursor: pointer;
 }
 
