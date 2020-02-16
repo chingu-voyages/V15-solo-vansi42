@@ -24,12 +24,14 @@
   position: absolute;
 }
 
-.tile.available {
+.tile.available:hover {
   cursor: pointer;
+  border: 2px solid aqua;
+  box-sizing: border-box;
 }
 
 .tile.selected {
-  border: 2px solid aqua;
+  border: 2px solid gold;
   box-sizing: border-box;
 }
 
